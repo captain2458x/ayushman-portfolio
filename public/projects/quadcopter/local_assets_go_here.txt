@@ -1,0 +1,17 @@
+# Place your quadcopter project screenshot images in this folder.
+# Filenames must be exactly:
+# - assembly_wireframe.png
+# - multiview_cad.png
+# - render_full.png
+# - propeller_cad.png
+# - propeller_multiview.png
+# - fea_stress.png
+# - fea_deformation.png
+# - cfd_vectors.png
+# - cfd_planar_vectors.png
+# - cfd_pressure.png
+# - cfd_volumetric.png
+# - plot_lift.png
+# - plot_drag.png
+# - plot_residuals.png
+# - force_report.png

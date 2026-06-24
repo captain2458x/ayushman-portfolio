@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IoT Health Monitor – Project Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0a192f;
+      color: #e0e6f5;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+    }
+    a {
+      color: #64ffda;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #112240;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    h1, h2 {
+      color: #64ffda;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 8px 16px;
+      border: 1px solid #64ffda;
+      border-radius: 6px;
+      color: #64ffda;
+      transition: background 0.2s;
+    }
+    .back-link:hover {
+      background: #64ffda;
+      color: #0a192f;
+    }
+    /* Gallery */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .gallery img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .gallery img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>IoT Health Monitor</h1>
+    <p>
+      <strong>Overview:</strong> This project is part of <em>Solution Squads (Team 9)</em>. 
+      The IoT Health Monitor, also called <strong>CardioGuard</strong>, is a wearable device 
+      that continuously tracks patient vitals such as ECG, heart rate (BPM), and SpO₂. 
+      It integrates low-cost sensors with an ESP8266 microcontroller and sends real-time 
+      data to the <strong>ThingSpeak IoT Cloud</strong>. Alerts are pushed instantly 
+      through the <strong>Telegram Bot API</strong>.
+    </p>
+
+    <h2>Key Features</h2>
+    <ul>
+      <li>Real-time ECG and heart rate monitoring (AD8232 + MAX30102)</li>
+      <li>ESP8266 Wi-Fi based IoT data transmission</li>
+      <li>ThingSpeak dashboard for vitals visualization</li>
+      <li>Instant alerts to patients, families, and doctors via Telegram</li>
+      <li>Prototype tested under <em>Kalam Pragati MakeX Internship 2025</em></li>
+    </ul>
+
+    <h2>Tools & Technologies</h2>
+    <ul>
+      <li>Hardware: ESP8266 (NodeMCU), MAX30102, AD8232 ECG Sensor</li>
+      <li>Software: Arduino IDE, ThingSpeak Cloud, Telegram Bot API</li>
+      <li>Languages: Embedded C/C++</li>
+    </ul>
+
+    <h2>Media</h2>
+    <p>
+      📑 <a href="project report.pdf" target="_blank">View Full Project Report (PDF)</a><br>
+      🎨 <a href="https://www.figma.com/proto/7Xj1GH6wjBlnZGIjzhGKUM/Untitled?node-id=0-1&t=VvgiSMTWkTWble83-1" target="_blank">Figma UI Prototype (Patient, Family, Doctor, Ambulance)</a><br>
+      📑 <a href="Description.txt" target="_blank">Project Description</a>
+    </p>
+
+
+    <div class="gallery">
+      <img src="1757696137634.jpg" alt="IoT Health Monitor prototype front view">
+      <img src="circuit.jpg" alt="Circuit wiring and sensors">
+      <img src="thingskepak.jpg" alt="ThingSpeak dashboard with vitals">
+      <img src="1757696150800.jpg" alt="Figma UI prototype Screenshot">
+        <img src="1757696179914.jpg" alt="Telegram alert message">
+    </div>
+
+    <a href="../index.html" class="back-link">⬅ Back to Portfolio</a>
+  </div>
+</body>
+</html>

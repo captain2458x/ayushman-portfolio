@@ -1,0 +1,33 @@
+CardioGuard – Real-Time Heart Monitoring & Alert System
+CardioGuard – Real-Time Heart Monitoring & Alert System
+
+Developed CardioGuard, a real-time wearable heart monitoring system designed to reduce sudden cardiac deaths by enabling continuous ECG monitoring and automated emergency alerts.
+
+📌 Key Features:
+
+Wearable ECG & heart-rate monitoring using AD8232 and MAX30102 sensors
+
+IoT-enabled dashboards for patients, families, doctors, ambulances, and hospitals
+
+Real-time alerts via Telegram bot & cloud integration (ThingSpeak)
+
+Location tracking and pre-hospital notifications to save golden minutes
+
+Figma UI prototype designed for multiple stakeholders:
+
+Patient App → vitals, SOS button, history logs
+
+Family Member App → live data + instant alerts with location map
+
+Doctor Dashboard → real-time ECG view, patient list, emergency accept/decline
+
+Ambulance Dashboard → live patient data + GPS navigation + pre-hospital alert
+
+👨‍💻 My role: Hardware Integration- Design on Onshape software and 3d printed using bambu labs printer
+
+👥 Team: Solution Squads (Team 9) – Ayushman Srivastav, Surya Pratap Singh, Ratnesh Sahu, Abhishek Yadav, Mohd Majid, Shivansh Srivastava
+
+🚀 Outcome: Successfully built and tested a prototype integrating hardware, IoT cloud dashboards, and automated alerting — demonstrating a scalable solution for emergency healthcare.
+Developed CardioGuard, a real-time wearable heart monitoring system designed to reduce sudden cardiac deaths by enabling continuous ECG monitoring and automated emergency alerts. 
+
+Skills: 3D Modeling · 3D Printing · Arduino IDE · C++ · Autodesk Tinkercad · Design Thinking · ESP8266 · Figma (Software) · Internet of Things (IoT) · Laser Cutting · MATLAB · Onshape · Rapid Prototyping · Embedded Systems
