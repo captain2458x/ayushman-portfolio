@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 
 export default function About() {
   const stats = [
-    { num: '7.7', label: 'CGPA · B.Tech' },
+    { num: '7.8', label: 'CGPA · B.Tech' },
     { num: '2', label: 'Internships' },
     { num: '5', label: 'Certifications' },
     { num: '4+', label: 'Projects' }
