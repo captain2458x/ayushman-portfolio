@@ -5,6 +5,7 @@ import { Project } from '../../types';
 import SoundManager from '../../utils/audio';
 
 interface ProjectCardProps {
+  key?: React.Key;
   project: Project;
 }
 

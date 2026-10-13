@@ -3,6 +3,7 @@ import { Calendar, MapPin, Compass } from 'lucide-react';
 import { ExperienceItem } from '../../types';
 
 interface ExperienceCardProps {
+  key?: React.Key;
   experience: ExperienceItem;
 }
 

@@ -5,6 +5,7 @@ import { SkillCategory } from '../../types';
 import SoundManager from '../../utils/audio';
 
 interface SkillCategoryCardProps {
+  key?: React.Key;
   category: SkillCategory;
 }
 

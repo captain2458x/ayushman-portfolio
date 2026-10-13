@@ -3,6 +3,7 @@ import { Award, ExternalLink } from 'lucide-react';
 import { CertificationItem } from '../../types';
 
 interface CertificationCardProps {
+  key?: React.Key;
   certification: CertificationItem;
 }
 

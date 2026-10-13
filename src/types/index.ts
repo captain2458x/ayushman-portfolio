@@ -24,7 +24,7 @@ export interface TelemetryDatum {
 }
 
 export interface SimulationChartPoint {
-  iteration: number;
+  iteration?: number;
   residual?: number;
   lift?: number;
   drag?: number;
