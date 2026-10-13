@@ -1,26 +1,34 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, Calendar, MapPin } from 'lucide-react';
 
 export default function Education() {
   const education = [
     {
-      school: 'Feroze Gandhi Institute of Engg & Technology',
+      school: 'Feroze Gandhi Institute of Engg & Technology (AKTU)',
       degree: 'B.Tech — Aeronautical Engineering · SGPA: 7.8',
-      date: 'Sep 2023 – Jul 2027',
-      location: 'Rae Bareli'
+      date: 'Sep 2023 – Jul 2027 (Class of 2027)',
+      location: 'Rae Bareli, Uttar Pradesh',
+      coursework: [
+        { name: 'Aerodynamics & Gas Dynamics', color: 'bg-sky-50 text-sky-700 border-sky-200' },
+        { name: 'Aircraft Propulsion & Gas Turbines', color: 'bg-amber-50 text-amber-800 border-amber-200' },
+        { name: 'Aircraft Structures & FEA', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+        { name: 'Flight Mechanics & Performance', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
+        { name: 'Computational Fluid Dynamics (CFD)', color: 'bg-cyan-50 text-cyan-800 border-cyan-200' },
+        { name: 'Space Flight & Orbital Mechanics', color: 'bg-purple-50 text-purple-700 border-purple-200' }
+      ]
     },
     {
       school: 'Kamla Nehru Institute of Child Education',
-      degree: 'Intermediate (Class XII)',
+      degree: 'Intermediate (Class XII) · PCM',
       date: 'Apr 2021 – Feb 2023',
-      location: ''
+      location: 'Sultanpur, Uttar Pradesh'
     },
     {
       school: 'Central Academy',
-      degree: 'Matriculation (Class X)',
+      degree: 'Matriculation (Class X) · Science & Mathematics',
       date: '2017 – 2020',
-      location: ''
+      location: 'Sultanpur, Uttar Pradesh'
     }
   ];
 
@@ -28,37 +36,70 @@ export default function Education() {
     <motion.section 
       id="education" 
       className="scroll-mt-24"
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5 }}
     >
-      <div className="flex items-center gap-4 mb-8">
-        <h2 className="text-2xl font-display font-bold text-slate-200 flex items-center gap-2">
-          <span className="text-cyan-400 font-mono text-xl font-normal">05.</span> Education
+      <div className="flex items-center gap-3 mb-6">
+        <span className="text-xs font-mono font-bold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-md border border-sky-200">
+          03.
+        </span>
+        <h2 className="text-2xl font-display font-bold text-slate-900">
+          Education
         </h2>
       </div>
       
-      <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-800 before:to-transparent">
+      <div className="space-y-4">
         {education.map((item, i) => (
           <motion.div 
             key={i} 
-            initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: i * 0.2, duration: 0.5 }}
-            className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active"
+            transition={{ delay: i * 0.1, duration: 0.4 }}
+            className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs hover:border-sky-300 hover:shadow-sm transition-all"
           >
-            <div className="flex items-center justify-center w-10 h-10 rounded-full border border-slate-800 bg-slate-950 text-cyan-400 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow z-10">
-              <GraduationCap size={18} />
-            </div>
-            <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-slate-800 bg-slate-900/50 hover:border-cyan-400/30 transition-colors relative overflow-hidden group-hover:bg-slate-800/80">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent -translate-x-full group-hover:animate-[scan_2s_ease-in-out_infinite]"></div>
-              <div className="flex items-center justify-between space-x-2 mb-1">
-                <div className="font-bold text-slate-200">{item.school}</div>
+            <div className="flex items-start gap-3.5">
+              <div className="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600 shrink-0 mt-0.5">
+                <GraduationCap size={18} />
               </div>
-              <div className="text-sm text-cyan-400 font-mono mb-2">{item.degree}</div>
-              <div className="text-xs text-slate-500 font-mono">{item.date}</div>
+              <div className="flex-grow">
+                <h3 className="font-display font-bold text-slate-900 text-sm sm:text-base leading-tight">
+                  {item.school}
+                </h3>
+                <div className="text-xs text-sky-600 font-mono font-semibold mt-1">
+                  {item.degree}
+                </div>
+                <div className="flex items-center gap-3 text-xs text-slate-600 font-sans mt-1">
+                  <span className="flex items-center gap-1 font-mono text-[11px] text-slate-600">
+                    <Calendar size={11} /> {item.date}
+                  </span>
+                  {item.location && (
+                    <span className="flex items-center gap-1 font-mono text-[11px] text-slate-600">
+                      <MapPin size={11} /> {item.location}
+                    </span>
+                  )}
+                </div>
+
+                {item.coursework && (
+                  <div className="mt-3.5 pt-3 border-t border-slate-100">
+                    <div className="text-[10px] uppercase font-mono tracking-wider text-slate-600 font-semibold mb-2">
+                      Core Aeronautical Modules:
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {item.coursework.map((course, cIdx) => (
+                        <span 
+                          key={cIdx} 
+                          className={`text-[10px] font-mono px-2 py-0.5 rounded-md border ${course.color}`}
+                        >
+                          {course.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </motion.div>
         ))}

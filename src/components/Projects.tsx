@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Folder, ChevronDown, ChevronUp, File, Download } from 'lucide-react';
+import { Folder, ChevronDown, ChevronUp, File, Download, ArrowLeft, ArrowUpRight } from 'lucide-react';
 import SoundManager from '../utils/audio';
 import TelemetryOverlay from './TelemetryOverlay';
 
@@ -23,6 +23,7 @@ interface ReportDetail {
 }
 
 interface Project {
+  id: string;
   title: string;
   subtitle?: string;
   description: string;
@@ -33,6 +34,10 @@ interface Project {
   images?: ProjectImage[];
   categories?: ProjectCategory[];
   isCadModels?: boolean;
+  previewImage?: string;
+  categoryTag?: string;
+  badgeColor?: string;
+  keyMetrics?: string[];
   telemetry?: {
     stressMax: string;
     forceName: string;
@@ -43,9 +48,14 @@ interface Project {
 
 const projects: Project[] = [
   {
+    id: 'quadcopter',
     title: 'Quadcopter UAV — Design, CFD & PID Flight Simulation',
     subtitle: 'Solo Project | FGIET Rae Bareli',
     description: 'A comprehensive, multi-physics engineering project involving the complete structural design, transient CFD analysis, and control loop formulation of an X-450 quadcopter to achieve stable flight dynamics and aerodynamic efficiency.',
+    previewImage: '/projects/quadcopter/render_full.png',
+    categoryTag: 'UAV · CFD & Aerodynamics',
+    badgeColor: 'sky',
+    keyMetrics: ['14N Thrust', '6000 RPM CFD', '4.296 MPa FEA'],
     tech: ['Fusion 360', 'ANSYS 2026 R1', 'ANSYS Fluent', 'CFD', 'MATLAB', 'Simulink', 'PID Control'],
     featured: true,
     date: 'Mar 2026 – Apr 2026',
@@ -113,9 +123,14 @@ const projects: Project[] = [
     ]
   },
   {
+    id: 'cubesat',
     title: 'CubeSat Structure Design & Thermal Analysis — LEO Mission',
     subtitle: 'Solo Project | FGIET Rae Bareli',
     description: 'An aerospace simulation mapping the design, structural limits under launch loads, and radiative thermal environment of a 1U CubeSat orbiting in LEO, validated by trajectory ground track simulation in MATLAB.',
+    previewImage: '/projects/cubesat/cubesat_assembly.png',
+    categoryTag: 'Space Tech · Thermal FEA',
+    badgeColor: 'violet',
+    keyMetrics: ['10g Launch Load', '+120°C / -100°C Thermal', 'LEO Orbit'],
     tech: ['Fusion 360', 'ANSYS Workbench 2025 R2', 'MATLAB', 'Thermal FEA', 'Orbital Mechanics'],
     featured: true,
     date: 'Jan 2026 – Feb 2026',
@@ -169,15 +184,20 @@ const projects: Project[] = [
     ]
   },
   {
-    title: 'CardioGuard – Real-Time Heart Monitoring & Alert System',
-    subtitle: 'IoT Project | Kalam Pragati Internship',
-    description: 'A wearable IoT healthcare device designed to monitor patient vitals in real time, featuring integrated ECG/sensor data visualization, Telegram emergency broadcasting, and an optimized 3D-printed enclosure designed in Onshape.',
-    tech: ['Arduino', 'ESP8266', 'ThingSpeak', 'AD8232 ECG', 'MAX30102', 'Telegram API', 'Onshape', '3D Printing'],
+    id: 'cardioguard',
+    title: 'CardioGuard – Aviator & High-G Biometric Telemetry System',
+    subtitle: 'Avionics & Telemetry Project | Kalam Pragati Internship',
+    description: 'A wearable bio-telemetry system developed for high-stress aerospace environments to monitor pilot and crew physiological vitals in real time, featuring integrated ECG/SpO2 sensor logging, telemetry dashboards, Telegram emergency distress signals, and a custom 3D-printed enclosure modeled in Onshape.',
+    previewImage: '/projects/cardioguard/1757696137634.jpg',
+    categoryTag: 'Avionics & Telemetry',
+    badgeColor: 'rose',
+    keyMetrics: ['ESP8266 IoT', 'AD8232 ECG', '3D Printed Enclosure'],
+    tech: ['ESP8266', 'Avionics Telemetry', 'AD8232 ECG', 'MAX30102', 'ThingSpeak', 'Onshape CAD', 'Rapid Prototyping'],
     featured: true,
     date: 'Aug 2025 – Sep 2025',
     bullets: [
-      'Built wearable IoT device using AD8232 ECG + MAX30102 sensors with ThingSpeak dashboard and Telegram emergency alerts',
-      'Designed 3D-printed casing in Onshape — successfully built and tested complete working prototype'
+      'Engineered wearable bio-telemetry unit using AD8232 ECG + MAX30102 pulse oximetry sensors for real-time stress & vitals transmission',
+      'Designed compact form-factor casing in Onshape — fabricated via additive manufacturing (3D printing) and validated under continuous sensor streaming'
     ],
     images: [
       { src: '/projects/cardioguard/1757696137634.jpg', alt: 'Hardware prototype front view' },
@@ -187,15 +207,20 @@ const projects: Project[] = [
       { src: '/projects/cardioguard/1757696179914.jpg', alt: 'Telegram alert message' }
     ],
     telemetry: {
-      stressMax: 'N/A (Wearable)',
-      forceName: 'BPM_RATE',
-      thrustVal: '60-100 Hz'
+      stressMax: '3.3V Low-Power',
+      forceName: 'HR_PULSE',
+      thrustVal: '60-100 BPM'
     }
   },
   {
+    id: 'pipeflow',
     title: 'ANSYS Mastery — Sudden Contraction Pipe Flow Simulation',
     subtitle: 'Solo Project | ANSYS CFD Mastery',
     description: 'A comprehensive, transient CFD analysis modeling the flow dynamics, velocity acceleration, and pressure distribution of an incompressible fluid through a pipe experiencing a sudden cross-sectional area contraction.',
+    previewImage: '/projects/pipeflow/streamlines_3d.png',
+    categoryTag: 'CFD · Fluid Dynamics',
+    badgeColor: 'amber',
+    keyMetrics: ['8.16 m/s Velocity', '164 Iters Converged', 'ANSYS Fluent'],
     tech: ['ANSYS Workbench', 'ANSYS Fluent', 'CFD-Post', 'Fluid Dynamics', 'Mesh Optimization'],
     featured: true,
     date: 'Jun 2026',
@@ -246,15 +271,25 @@ const projects: Project[] = [
     ]
   },
   {
+    id: 'cad-models',
     title: 'Aerospace CAD Models',
     description: 'Parametric 3D models of aerospace components designed for simulation and manufacturing purposes using Onshape, AutoCAD, and SolidWorks.',
+    previewImage: '/projects/quadcopter/multiview_cad.png',
+    categoryTag: 'Parametric CAD & Repositories',
+    badgeColor: 'indigo',
+    keyMetrics: ['40+ CAD Files', 'SolidWorks Assemblies', 'AutoCAD DWG'],
     tech: ['Onshape', 'AutoCAD', 'SolidWorks'],
     featured: false,
     isCadModels: true,
   },
   {
+    id: 'matlab-dynamics',
     title: 'MATLAB Flight Dynamics',
     description: 'Simulated basic longitudinal dynamics and aircraft response to analyze stability and control characteristics using MATLAB & Simulink.',
+    previewImage: '/projects/quadcopter/plot_residuals.png',
+    categoryTag: 'Flight Dynamics & Control',
+    badgeColor: 'sky',
+    keyMetrics: ['Longitudinal Modes', 'State-Space', 'Root-Locus'],
     tech: ['MATLAB', 'Simulink', 'Flight Dynamics'],
     featured: false,
     bullets: [
@@ -264,8 +299,13 @@ const projects: Project[] = [
     ]
   },
   {
+    id: 'laser-cut-panel',
     title: 'Laser-cut Avionics Panel',
     description: 'Miniature avionics panel with precision-engraved labels using laser cutting technology, designed in AutoCAD for rapid prototyping.',
+    previewImage: '/projects/quadcopter/propeller_multiview.png',
+    categoryTag: 'Avionics Prototyping',
+    badgeColor: 'emerald',
+    keyMetrics: ['AutoCAD 2D Prints', 'Laser Engraved', 'Acrylic Mockups'],
     tech: ['AutoCAD', 'Laser Cutting', 'Prototyping'],
     featured: false,
     bullets: [
@@ -405,13 +445,16 @@ const cadFolders = [
 
 interface ProjectsProps {
   viewMode?: 'teaser' | 'full';
+  onViewProject?: (projectId: string) => void;
   onViewAll?: () => void;
   onBack?: () => void;
+  targetProjectId?: string;
 }
 
-export default function Projects({ viewMode = 'full', onViewAll, onBack }: ProjectsProps) {
+export default function Projects({ viewMode = 'full', onViewProject, onViewAll, onBack, targetProjectId }: ProjectsProps) {
   const featuredProjects = projects.filter(p => p.featured);
   const otherProjects = projects.filter(p => !p.featured);
+  const teaserProjects = projects.filter(p => p.featured || p.id === 'cad-models');
   
   // State for non-categorized images (maps project list indices securely)
   const [activeImages, setActiveImages] = React.useState<Record<number, number>>({});
@@ -431,69 +474,191 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
   // State for selected folder in CAD model explorer
   const [activeFolderId, setActiveFolderId] = React.useState('solidworks');
 
+  // Auto-scroll to target project when opened in full view
+  useEffect(() => {
+    if (viewMode === 'full') {
+      const params = new URLSearchParams(window.location.search);
+      const target = targetProjectId || params.get('id') || window.location.hash.replace('#', '').replace('project-', '');
+      if (target) {
+        setTimeout(() => {
+          const el = document.getElementById(`project-${target}`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 150);
+      }
+    }
+  }, [viewMode, targetProjectId]);
+
   if (viewMode === 'teaser') {
     return (
       <motion.section 
         id="projects" 
         className="scroll-mt-24"
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.6 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.5 }}
       >
-        <div className="flex items-center gap-4 mb-12">
-          <h2 className="text-2xl md:text-3xl font-display font-bold text-slate-200 flex items-center gap-2">
-            <span className="text-cyan-400 font-mono text-xl font-normal">03.</span> Featured Projects
-          </h2>
-          <div className="h-px bg-slate-800 flex-grow max-w-xs"></div>
-        </div>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="font-mono text-xs font-bold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-md border border-sky-200 uppercase">
+                05. PORTFOLIO SHOWCASE
+              </span>
+              <span className="text-slate-400 text-xs font-mono">// AEROSPACE WORKSTATIONS</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-extrabold text-slate-900 tracking-tight">
+              Featured Aerospace Projects
+            </h2>
+            <p className="text-slate-600 text-sm font-sans mt-1 max-w-2xl">
+              Click any project preview to enter the dedicated interactive workstation with CAD models, CFD streamlines, and FEA stress contours.
+            </p>
+          </div>
 
-        {/* Small Featured Project Grid */}
-        <div className="grid md:grid-cols-2 gap-6 mb-12">
-          {featuredProjects.map((project, idx) => (
-            <motion.div
-              key={idx}
-              whileHover={{ y: -5 }}
-              onClick={onViewAll}
-              className="bg-slate-900/40 border border-slate-800 hover:border-cyan-400/45 p-6 rounded-xl relative overflow-hidden group cursor-pointer transition-all duration-300 flex flex-col justify-between"
-            >
-              {/* Scanline hover effect */}
-              <div className="absolute inset-0 h-[2px] w-full bg-cyan-400/10 -translate-y-full group-hover:animate-[scan_2s_ease-in-out_infinite] pointer-events-none"></div>
-              
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="font-mono text-[9px] text-cyan-400 tracking-wider uppercase font-semibold">
-                    CFD // SIMULATION // 0{idx + 1}
-                  </span>
-                  <span className="text-[10px] text-slate-500 font-mono">{project.date}</span>
-                </div>
-                <h3 className="text-lg font-display font-bold text-slate-200 group-hover:text-cyan-400 transition-colors mb-2">
-                  {project.title}
-                </h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-sans mb-6">
-                  {project.description}
-                </p>
-              </div>
-
-              <ul className="flex flex-wrap gap-1.5 font-mono text-[9px] text-slate-500 mt-auto">
-                {project.tech.map(t => (
-                  <li key={t} className="bg-slate-950/60 px-2 py-0.5 rounded border border-slate-850/50">{t}</li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Supersonic Launch Hangar Button */}
-        <div className="flex justify-center">
           <button
             onClick={() => {
+              SoundManager.playClick();
               if (onViewAll) onViewAll();
             }}
-            className="group px-6 py-3 border border-cyan-400/60 hover:border-cyan-400 text-cyan-400 font-mono text-xs font-bold tracking-widest uppercase rounded-lg hover:bg-cyan-500/5 transition-all duration-300 flex items-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.05)] hover:shadow-[0_0_25px_rgba(6,182,212,0.15)]"
+            className="self-start sm:self-auto flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 font-mono text-xs font-bold transition-all cursor-pointer shadow-2xs hover:shadow-xs active:scale-95"
           >
-            <span>[ENTER_HANGAR_DECK]</span>
-            <span className="group-hover:translate-x-1.5 transition-transform duration-300 font-bold font-sans">▸</span>
+            <span>View All Projects</span>
+            <span className="text-sm">➔</span>
+          </button>
+        </div>
+
+        {/* 5 Project Image Preview Cards Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 items-stretch">
+          {teaserProjects.map((project) => {
+            const dotColor = 
+              project.badgeColor === 'violet' ? 'bg-indigo-500' :
+              project.badgeColor === 'rose' ? 'bg-rose-500' :
+              project.badgeColor === 'amber' ? 'bg-amber-500' :
+              project.badgeColor === 'indigo' ? 'bg-blue-600' :
+              'bg-sky-500';
+
+            return (
+              <motion.div
+                key={project.id}
+                whileHover={{ y: -5 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => {
+                  SoundManager.playClick();
+                  if (onViewProject) {
+                    onViewProject(project.id);
+                  } else if (onViewAll) {
+                    onViewAll();
+                  }
+                }}
+                className="group bg-white rounded-2xl border border-slate-200/90 hover:border-sky-300 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden cursor-pointer"
+              >
+                {/* Image Header with Aspect-Video */}
+                <div className="relative aspect-video w-full overflow-hidden bg-slate-950 border-b border-slate-100">
+                  <img
+                    src={project.previewImage || project.images?.[0]?.src}
+                    alt={project.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${project.id}/800/450`;
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-70"></div>
+                  
+                  {/* Category Pill floating on image */}
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-slate-200/80 text-[10px] font-mono font-bold shadow-xs">
+                    <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`}></span>
+                    <span className="text-slate-800 uppercase tracking-wider">{project.categoryTag}</span>
+                  </div>
+
+                  {/* Corner Action Arrow */}
+                  <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/95 backdrop-blur-md border border-slate-200 flex items-center justify-center text-slate-700 group-hover:bg-sky-600 group-hover:text-white group-hover:border-sky-600 transition-all shadow-xs">
+                    <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </div>
+
+                  {/* Date badge on bottom-right of image */}
+                  {project.date && (
+                    <div className="absolute bottom-2.5 right-3 px-2 py-0.5 rounded bg-slate-950/80 backdrop-blur-md text-[10px] font-mono text-slate-200 border border-white/10">
+                      {project.date.split('–')[0].trim()}
+                    </div>
+                  )}
+                </div>
+
+                {/* Card Content */}
+                <div className="p-5 sm:p-6 flex flex-col flex-grow text-left">
+                  <div className="text-[11px] font-mono text-slate-500 mb-1.5">{project.subtitle}</div>
+                  
+                  <h3 className="text-base sm:text-lg font-display font-bold text-slate-900 group-hover:text-sky-600 transition-colors leading-snug line-clamp-2 mb-2.5">
+                    {project.title}
+                  </h3>
+
+                  <p className="text-xs text-slate-600 font-sans leading-relaxed line-clamp-2 mb-4">
+                    {project.description}
+                  </p>
+
+                  {/* Key Engineering Telemetry Badges */}
+                  {project.keyMetrics && (
+                    <div className="flex flex-wrap gap-1.5 mb-4">
+                      {project.keyMetrics.map((metric, mIdx) => (
+                        <span 
+                          key={mIdx}
+                          className="font-mono text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200/90 text-slate-700"
+                        >
+                          {metric}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Tech stack & Action Row */}
+                  <div className="flex flex-wrap gap-1 font-mono text-[9px] text-slate-500 mt-auto pt-3.5 border-t border-slate-100 items-center justify-between">
+                    <div className="flex flex-wrap gap-1">
+                      {project.tech.slice(0, 3).map(t => (
+                        <span key={t} className="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200/70 text-slate-600 font-medium">{t}</span>
+                      ))}
+                      {project.tech.length > 3 && (
+                        <span className="text-slate-400 self-center">+{project.tech.length - 3}</span>
+                      )}
+                    </div>
+
+                    <span className="text-sky-600 font-mono text-[11px] font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1 shrink-0">
+                      <span>View Full Project</span>
+                      <span>➔</span>
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Supersonic Launch Hangar Banner */}
+        <div className="mt-12 bg-gradient-to-r from-sky-50 via-white to-blue-50 border border-sky-200 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xs relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-sky-100/50 rounded-full blur-2xl pointer-events-none -mr-20 -mt-20"></div>
+          
+          <div className="space-y-1.5 text-center md:text-left z-10">
+            <div className="flex items-center justify-center md:justify-start gap-2 text-sky-600 font-mono text-[11px] font-bold uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
+              <span>COMPLETE AEROSPACE WORKSTATIONS DECK</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-display font-bold text-slate-900">
+              Need in-depth simulation curves, FEA stress plots & CAD files?
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-600 font-sans max-w-xl">
+              Enter the dedicated project deck to interact with full-resolution CAD geometry, 6000 RPM velocity vectors, flight telemetry overlays, and download 40+ CAD models.
+            </p>
+          </div>
+
+          <button
+            onClick={() => {
+              SoundManager.playFlyby();
+              if (onViewAll) onViewAll();
+            }}
+            className="z-10 px-6 py-3.5 bg-sky-600 hover:bg-sky-700 text-white font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2.5 shrink-0 cursor-pointer active:scale-95"
+          >
+            <span>Open Dedicated Projects Deck</span>
+            <span className="text-sm">➔</span>
           </button>
         </div>
       </motion.section>
@@ -503,38 +668,80 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
   return (
     <motion.section 
       id="projects" 
-      className="scroll-mt-24"
-      initial={{ opacity: 0, y: 50 }}
+      className="scroll-mt-24 space-y-8 sm:space-y-10"
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5 }}
     >
-      {onBack && (
-        <div className="flex justify-between items-center mb-12 pb-6 border-b border-slate-800/80">
+      {/* Dedicated Project Deck Top Navigation Bar */}
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 lg:p-6 shadow-xs space-y-4 sm:space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <button
-            onClick={onBack}
-            className="px-3.5 py-1.5 border border-slate-800 rounded bg-slate-900/50 text-slate-400 hover:text-cyan-400 hover:border-cyan-400/30 transition-all font-mono text-[10px] cursor-pointer flex items-center gap-1.5"
+            onClick={() => {
+              SoundManager.playClick();
+              if (onBack) onBack();
+              else window.location.href = '/#projects';
+            }}
+            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-sky-50 border border-slate-200 hover:border-sky-300 text-slate-700 hover:text-sky-700 font-mono text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95"
           >
-            <span>◂ [RETURN_TO_COMMAND_CENTER]</span>
+            <ArrowLeft size={14} />
+            <span>◂ Back to Portfolio (Home)</span>
           </button>
-          <div className="font-mono text-[10px] text-cyan-400/80 flex items-center gap-1.5 bg-cyan-400/5 px-2.5 py-0.5 rounded border border-cyan-400/10">
-            <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-            <span>HANGAR DECK OPERATIONAL</span>
+
+          <div className="flex items-center gap-2 font-mono text-[10px] sm:text-[11px] text-slate-500 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/80">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="text-slate-800 font-bold">5 AEROSPACE WORKSTATIONS ACTIVE</span>
           </div>
         </div>
-      )}
 
-      <div className="flex items-center gap-4 mb-16">
-        <h2 className="text-2xl md:text-3xl font-display font-bold text-slate-200 flex items-center gap-2">
-          <span className="text-cyan-400 font-mono text-xl font-normal">03.</span> {onBack ? "Project Hangar & Analysis Deck" : "Some Things I've Built"}
-        </h2>
-        <div className="h-px bg-slate-800 flex-grow max-w-xs"></div>
+        {/* Header Title & Description */}
+        <div className="border-t border-slate-100 pt-4">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-mono text-[10px] sm:text-xs font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 uppercase">
+              AEROSPACE WORKSTATION DECK
+            </span>
+            <span className="text-slate-400 text-[10px] sm:text-xs font-mono">// FULL SIMULATION & CAD DATA</span>
+          </div>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-display font-extrabold text-slate-900 tracking-tight">
+            Aerospace Engineering Workstations & Hangar Deck
+          </h1>
+          <p className="text-slate-600 text-xs sm:text-sm font-sans mt-1.5 max-w-2xl leading-relaxed">
+            Examine in-depth CAD assemblies, transient CFD rotor aerodynamics at 6000 RPM, FEA structural stress distributions under launch loads, and download parametric CAD files.
+          </p>
+        </div>
+
+        {/* Quick Jump Pills */}
+        <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-100">
+          <span className="font-mono text-[10px] uppercase font-bold text-slate-400 mr-1 select-none">Quick Jump:</span>
+          {[
+            { id: 'quadcopter', label: 'Quadcopter UAV' },
+            { id: 'cubesat', label: 'CubeSat LEO' },
+            { id: 'cardioguard', label: 'CardioGuard' },
+            { id: 'pipeflow', label: 'Pipe Flow CFD' },
+            { id: 'cad-models', label: 'CAD Vault (40+ Files)' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => {
+                SoundManager.playClick();
+                const el = document.getElementById(`project-${tab.id}`);
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
+              className="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-sky-50 text-slate-700 hover:text-sky-700 border border-slate-200 hover:border-sky-300 font-mono text-[11px] font-medium transition-all cursor-pointer shadow-2xs active:scale-95"
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Featured Projects Showcase */}
-      <div className="space-y-32 mb-32">
+      <div className="space-y-8 sm:space-y-10 mb-16">
         {featuredProjects.map((project, i) => {
-          // Unique interactive CAD workstation layout for Quadcopter and CubeSat
+          // Unique interactive CAD workstation layout for Quadcopter, CubeSat, PipeFlow
           if (project.categories) {
             const activeCatId = activeCatIds[i] || project.categories[0].id;
             const activeImgIdx = activeImgIdxs[i] || 0;
@@ -548,30 +755,28 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
             const isFeaturedExpanded = expandedFeatured[i] !== false;
 
             return (
-              <div key={i} className="flex flex-col gap-8">
-                <div className="border border-slate-800/80 bg-slate-950/80 rounded-2xl p-6 backdrop-blur-md shadow-2xl relative overflow-hidden">
-                  {/* Neon header divider band */}
-                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/25 to-transparent"></div>
+              <div key={i} id={`project-${project.id}`} className="scroll-mt-24 flex flex-col gap-6">
+                <div className="border border-slate-200 bg-white rounded-2xl p-4 sm:p-5 lg:p-6 shadow-xs hover:border-sky-300 hover:shadow-md transition-all relative overflow-hidden">
                   
                   {/* Header metadata */}
-                  <div className={`flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 ${isFeaturedExpanded ? 'border-b border-slate-800/80 pb-6 mb-6' : ''}`}>
+                  <div className={`flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3.5 ${isFeaturedExpanded ? 'border-b border-slate-100 pb-4 mb-4' : ''}`}>
                     <div className="flex flex-col text-left flex-grow">
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <span className={`h-2 w-2 rounded-full bg-cyan-400 ${isFeaturedExpanded ? 'animate-pulse' : ''}`}></span>
-                        <span className="font-mono text-[10px] tracking-widest text-cyan-400 font-bold uppercase">
-                          ANALYTICAL WORKSTATION // {isFeaturedExpanded ? 'ENGINE_RUNNING' : 'STANDBY'}
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`h-1.5 w-1.5 rounded-full bg-sky-500 ${isFeaturedExpanded ? 'animate-pulse' : ''}`}></span>
+                        <span className="font-mono text-[9px] tracking-wider text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 font-bold uppercase">
+                          AEROSPACE WORKSTATION // {isFeaturedExpanded ? 'ENGINE_RUNNING' : 'STANDBY'}
                         </span>
                       </div>
-                      <h3 className="text-xl md:text-2xl font-display font-bold text-slate-100 leading-tight">
+                      <h3 className="text-lg sm:text-xl font-display font-bold text-slate-900 leading-snug">
                         {project.title}
                       </h3>
-                      <p className="font-mono text-xs text-slate-400 mt-1">{project.subtitle} // {project.date}</p>
+                      <p className="font-mono text-xs text-slate-500 mt-0.5">{project.subtitle} // {project.date}</p>
                     </div>
 
                     {/* Operational Category Selector Tabs and Expand button */}
-                    <div className="flex items-center gap-4 self-stretch xl:self-auto justify-between sm:justify-start">
+                    <div className="flex flex-wrap items-center gap-2 self-stretch lg:self-auto justify-between lg:justify-end">
                       {isFeaturedExpanded && (
-                        <div className="flex flex-wrap gap-1.5 bg-slate-900/95 p-1.5 rounded-lg border border-slate-800/80 overflow-x-auto select-none sm:scrollbar-none">
+                        <div className="flex flex-wrap gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/80 select-none">
                           {project.categories.map(cat => (
                             <button
                               key={cat.id}
@@ -581,10 +786,10 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                                 setActiveImgIdxs(prev => ({ ...prev, [i]: 0 }));
                                 setLocalLoadErrors(prev => ({ ...prev, [i]: false }));
                               }}
-                              className={`px-3 py-1.5 rounded-md font-mono text-xs transition-all duration-200 cursor-pointer text-nowrap select-none font-semibold ${
+                              className={`px-2.5 py-1 rounded-lg font-mono text-[11px] transition-all duration-200 cursor-pointer font-semibold ${
                                 activeCatId === cat.id
-                                  ? 'bg-cyan-500 text-slate-950 font-bold shadow-lg shadow-cyan-500/10'
-                                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                                  ? 'bg-sky-600 text-white font-bold shadow-xs'
+                                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                               }`}
                             >
                               {cat.label}
@@ -598,10 +803,10 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                           SoundManager.playClick();
                           setExpandedFeatured(prev => ({ ...prev, [i]: !isFeaturedExpanded }));
                         }}
-                        className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-cyan-400 hover:border-cyan-400/30 transition-all cursor-pointer flex items-center gap-1.5 font-mono text-[10px] shrink-0"
+                        className="p-1.5 px-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:text-sky-600 hover:border-sky-300 transition-all cursor-pointer flex items-center gap-1 font-mono text-[10px] shrink-0"
                       >
                         <span>{isFeaturedExpanded ? '[COLLAPSE]' : '[EXPAND]'}</span>
-                        {isFeaturedExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        {isFeaturedExpanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
                       </button>
                     </div>
                   </div>
@@ -616,28 +821,26 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                         className="overflow-hidden"
                       >
                         {/* Interactive Asset Source Control Selector */}
-                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-6 border-b border-slate-800/35">
-                          <div className="flex flex-col text-left max-w-lg">
-                            <p className="font-sans text-xs text-slate-400">
-                              {assetSource === 'preview' 
-                                ? 'Showing high-resolution engineering design previews (Hosted Sandbox Mode).'
-                                : 'Attempting to load original screenshots directly from local workspaces folder.'}
-                            </p>
-                          </div>
-                          <div className="flex gap-1 bg-slate-900/90 border border-slate-800 p-1 rounded-lg shrink-0">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 pb-3 border-b border-slate-100">
+                          <p className="font-sans text-[11px] text-slate-500">
+                            {assetSource === 'preview' 
+                              ? 'Showing high-resolution engineering design previews (Hosted Sandbox Mode).'
+                              : 'Loaded original engineering screenshots directly from local workspaces folder.'}
+                          </p>
+                          <div className="flex gap-1 bg-slate-100 border border-slate-200/80 p-0.5 rounded-xl shrink-0">
                             <button
                               onClick={() => {
                                 SoundManager.playClick();
                                 setAssetSources(prev => ({ ...prev, [i]: 'preview' }));
                                 setLocalLoadErrors(prev => ({ ...prev, [i]: false }));
                               }}
-                              className={`py-1 px-2.5 rounded-md text-[10px] font-mono transition-all duration-200 font-semibold cursor-pointer ${
+                              className={`py-0.5 px-2.5 rounded-lg text-[9px] font-mono transition-all duration-200 font-semibold cursor-pointer ${
                                 assetSource === 'preview'
-                                  ? 'bg-cyan-500 text-slate-950 font-extrabold shadow shadow-cyan-500/10'
-                                  : 'text-slate-400 hover:text-slate-200'
+                                  ? 'bg-sky-600 text-white font-bold shadow-xs'
+                                  : 'text-slate-600 hover:text-slate-900'
                               }`}
                             >
-                              [MODE: MOCK_PREVIEW]
+                              [PREVIEW_ASSETS]
                             </button>
                             <button
                               onClick={() => {
@@ -645,27 +848,27 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                                 setAssetSources(prev => ({ ...prev, [i]: 'local' }));
                                 setLocalLoadErrors(prev => ({ ...prev, [i]: false }));
                               }}
-                              className={`py-1 px-2.5 rounded-md text-[10px] font-mono transition-all duration-200 font-semibold cursor-pointer ${
+                              className={`py-0.5 px-2.5 rounded-lg text-[9px] font-mono transition-all duration-200 font-semibold cursor-pointer ${
                                 assetSource === 'local'
-                                  ? 'bg-cyan-500 text-slate-950 font-extrabold shadow shadow-cyan-500/10'
-                                  : 'text-slate-400 hover:text-slate-200'
+                                  ? 'bg-sky-600 text-white font-bold shadow-xs'
+                                  : 'text-slate-600 hover:text-slate-900'
                               }`}
                             >
-                              [MODE: LOCAL_ASSETS]
+                              [LOCAL_DISK]
                             </button>
                           </div>
                         </div>
 
                         {/* Operational Display Screen Layout */}
-                        <div className="grid lg:grid-cols-12 gap-8 items-start">
-                          {/* Viewport (Left) */}
-                          <div className="lg:col-span-7 flex flex-col gap-4">
-                            <div className="relative rounded-xl overflow-hidden border border-slate-800/90 bg-slate-950 aspect-video flex items-center justify-center shadow-inner group">
+                        <div className="grid lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+                          {/* Viewport (Left) - Compact and Height-Restricted */}
+                          <div className="lg:col-span-7 flex flex-col gap-2.5 w-full overflow-hidden">
+                            <div className="relative rounded-xl overflow-hidden border border-slate-800/90 bg-slate-950 aspect-[16/10] max-h-[240px] sm:max-h-[270px] md:max-h-[290px] w-full flex items-center justify-center shadow-inner group">
                               {/* Interactive Scope Crosshair / Border Overlays */}
-                              <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-cyan-400/40 z-20 m-3 pointer-events-none"></div>
-                              <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-cyan-400/40 z-20 m-3 pointer-events-none"></div>
-                              <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-cyan-400/40 z-20 m-3 pointer-events-none"></div>
-                              <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-cyan-400/40 z-20 m-3 pointer-events-none"></div>
+                              <div className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-cyan-400/40 z-20 m-2.5 pointer-events-none"></div>
+                              <div className="absolute top-0 right-0 w-5 h-5 border-t-2 border-r-2 border-cyan-400/40 z-20 m-2.5 pointer-events-none"></div>
+                              <div className="absolute bottom-0 left-0 w-5 h-5 border-b-2 border-l-2 border-cyan-400/40 z-20 m-2.5 pointer-events-none"></div>
+                              <div className="absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2 border-cyan-400/40 z-20 m-2.5 pointer-events-none"></div>
                               
                               <div className="absolute inset-0 bg-cyan-400/[0.02] group-hover:bg-transparent transition-colors duration-300 z-10 mix-blend-multiply pointer-events-none"></div>
                               
@@ -673,42 +876,23 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                                 (() => {
                                   const projectDir = currentImage.src.split('/')[2] || 'project';
                                   return (
-                                    <div className="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center p-6 text-center border border-dashed border-red-500/30 rounded-xl overflow-y-auto z-30">
-                                      <div className="h-10 w-10 text-red-400 bg-red-500/10 rounded-full flex items-center justify-center mb-3 border border-red-500/20">
-                                        <Folder className="h-5 w-5" />
+                                    <div className="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center p-4 text-center border border-dashed border-red-500/30 rounded-xl overflow-y-auto z-30">
+                                      <div className="h-8 w-8 text-red-400 bg-red-500/10 rounded-full flex items-center justify-center mb-2 border border-red-500/20">
+                                        <Folder className="h-4 w-4" />
                                       </div>
-                                      <h4 className="text-xs font-mono font-bold text-slate-100 tracking-wider uppercase mb-1 font-semibold">
+                                      <h4 className="text-[11px] font-mono font-bold text-slate-100 tracking-wider uppercase mb-1">
                                         ENG_ASSET // MISSING_RAW_FILE
                                       </h4>
-                                      <p className="font-sans text-[11px] text-slate-450 max-w-md mb-3 leading-normal text-slate-400">
-                                        Expected file under project directory <code>public/projects/{projectDir}/</code> was not found. Images are loaded via <b>Mock Previews</b> by default.
+                                      <p className="font-sans text-[10px] text-slate-400 max-w-sm mb-2 leading-tight">
+                                        Expected file under <code>public/projects/{projectDir}/</code> not found.
                                       </p>
-                                      <div className="w-full max-w-sm bg-slate-900 border border-slate-800/80 rounded-lg p-3 text-left font-mono text-[10px] text-slate-300 space-y-2">
-                                        <div className="text-cyan-400 font-bold border-b border-slate-800 pb-1.5 mb-1.5 flex justify-between items-center text-[9px]">
-                                          <span>📁 RESOURCE PATH EXPECTED:</span>
-                                          <span className="text-red-400 shrink-0 font-bold">[NOT_FOUND]</span>
-                                        </div>
-                                        <div className="bg-slate-950 p-1.5 rounded select-all border border-slate-850/50 text-[9px] text-cyan-300 font-mono overflow-x-auto scrollbar-none whitespace-pre-wrap word-break-all break-all">
-                                          public/projects/{projectDir}/{currentImage.src.split('/').pop()}
-                                        </div>
-                                        <div className="text-slate-400 text-[10px] space-y-1.5 leading-relaxed pt-1 font-sans">
-                                          <p className="flex items-start gap-1.5">
-                                            <span className="text-cyan-400 font-bold">1.</span>
-                                            <span>Left sidebar block explorer me <code>public/</code> folder expand karke right-click karein, aur <code>projects</code> ke andar ek <b><code>{projectDir}</code></b> folder banayein.</span>
-                                          </p>
-                                          <p className="flex items-start gap-1.5">
-                                            <span className="text-cyan-400 font-bold">2.</span>
-                                            <span>Apne computer se snapshots ko is naye directory path folder me upload kar dein aur unke names coding pattern matching ke anusaar rakhein!</span>
-                                          </p>
-                                        </div>
-                                      </div>
                                       <button
                                         onClick={() => {
                                           SoundManager.playClick();
                                           setAssetSources(prev => ({ ...prev, [i]: 'preview' }));
                                           setLocalLoadErrors(prev => ({ ...prev, [i]: false }));
                                         }}
-                                        className="mt-4 px-3.5 py-1.5 bg-cyan-500 text-slate-950 rounded font-mono text-[10px] font-bold hover:bg-cyan-400 transition cursor-pointer"
+                                        className="px-3 py-1 bg-cyan-500 text-slate-950 rounded font-mono text-[9px] font-bold hover:bg-cyan-400 transition cursor-pointer"
                                       >
                                         [USE_SANDBOX_PREVIEWS_MODE]
                                       </button>
@@ -724,7 +908,7 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                                       autoPlay
                                       loop
                                       muted
-                                      className="w-full h-full object-cover rounded"
+                                      className="w-full h-full object-contain sm:object-cover rounded"
                                       onError={() => {
                                         if (assetSource === 'local') {
                                           setLocalLoadErrors(prev => ({ ...prev, [i]: true }));
@@ -736,7 +920,7 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                                     <img 
                                       src={activeImageSrc} 
                                       alt={currentImage.alt} 
-                                      className="w-full h-full object-cover transition-all duration-300 rounded"
+                                      className="w-full h-full object-contain sm:object-cover transition-all duration-300 rounded"
                                       referrerPolicy="no-referrer"
                                       onError={() => {
                                         if (assetSource === 'local') {
@@ -755,21 +939,21 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                               )}
 
                               {/* Telemetry Overlay text */}
-                              <div className="absolute top-3 left-10 z-20 bg-slate-950/80 border border-slate-800 px-2.5 py-0.5 rounded font-mono text-[9px] text-cyan-400/90 tracking-wider pointer-events-none">
+                              <div className="absolute top-2.5 left-8 z-20 bg-slate-950/80 border border-slate-800 px-2 py-0.5 rounded font-mono text-[8px] sm:text-[9px] text-sky-400 tracking-wider pointer-events-none">
                                 SYS_VIEW: {activeCatId.toUpperCase()} // CAD_IMG_0{activeImgIdx + 1}
                               </div>
                             </div>
 
                             {/* Display Status Bar */}
-                            <div className="bg-slate-900 border border-slate-800/80 rounded-lg p-3.5 text-left font-mono text-[11px] text-slate-300 leading-relaxed flex gap-2.5">
-                              <span className="text-cyan-400 shrink-0 font-bold select-none">[SYS_REPORT]</span>
-                              <span>
-                                <strong className="text-slate-100">{currentImage.title}:</strong> {currentImage.alt}
+                            <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-left font-mono text-[10px] sm:text-[11px] text-slate-700 leading-snug flex items-center gap-2">
+                              <span className="text-sky-600 shrink-0 font-bold select-none">[SYS_REPORT]</span>
+                              <span className="truncate">
+                                <strong className="text-slate-900">{currentImage.title}:</strong> {currentImage.alt}
                               </span>
                             </div>
 
                             {/* Viewport Sub-Thumbnails Strip */}
-                            <div className="grid grid-cols-5 gap-2 select-none">
+                            <div className="grid grid-cols-5 gap-1.5 select-none">
                               {currentCat.images.map((img, idx) => {
                                 const thumbSrc = assetSource === 'preview' ? (img.placeholder || img.src) : img.src;
                                 return (
@@ -780,8 +964,8 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                                       setActiveImgIdxs(prev => ({ ...prev, [i]: idx }));
                                       setLocalLoadErrors(prev => ({ ...prev, [i]: false }));
                                     }}
-                                    className={`relative rounded-md overflow-hidden aspect-square border-2 transition-all cursor-pointer ${
-                                      activeImgIdx === idx ? 'border-cyan-400 shadow-md shadow-cyan-400/10' : 'border-slate-900 opacity-40 hover:opacity-100'
+                                    className={`relative rounded-lg overflow-hidden h-10 sm:h-11 border-2 transition-all cursor-pointer ${
+                                      activeImgIdx === idx ? 'border-sky-500 ring-2 ring-sky-200' : 'border-slate-200 hover:border-slate-300'
                                     }`}
                                   >
                                     {thumbSrc.endsWith('.mp4') ? (
@@ -818,19 +1002,19 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                           </div>
 
                           {/* Operational Details Side-Console (Right) */}
-                          <div className="lg:col-span-5 relative z-20 flex flex-col items-start text-left gap-4">
+                          <div className="lg:col-span-5 relative z-20 flex flex-col items-start text-left gap-3 w-full">
                             {/* Description Bullet Summary */}
-                            <div className="bg-slate-905/70 border border-slate-800/60 backdrop-blur-sm p-6 rounded-xl text-slate-300 text-sm relative w-full shadow-md">
-                              <div className="absolute top-0 left-0 bottom-0 w-[2px] bg-cyan-400"></div>
-                              <p className="font-sans mb-4 text-slate-400 leading-relaxed text-sm font-normal">
+                            <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 sm:p-5 text-slate-700 text-xs sm:text-sm relative w-full shadow-2xs">
+                              <div className="absolute top-0 left-0 bottom-0 w-1 bg-sky-500 rounded-l-2xl"></div>
+                              <p className="font-sans mb-3 text-slate-600 leading-relaxed text-xs sm:text-sm font-normal">
                                 {project.description}
                               </p>
                               
                               {project.bullets && (
-                                <ul className="space-y-3.5 text-xs text-slate-300 font-sans border-t border-slate-800/60 pt-4 mt-4">
+                                <ul className="space-y-2 text-xs text-slate-700 font-sans border-t border-slate-200/80 pt-3 mt-3">
                                   {project.bullets.map((bullet, bIdx) => (
-                                    <li key={bIdx} className="flex items-start gap-2.5 leading-relaxed">
-                                      <span className="text-cyan-400 select-none font-bold shrink-0">▸</span>
+                                    <li key={bIdx} className="flex items-start gap-2 leading-relaxed">
+                                      <span className="text-sky-500 font-bold select-none shrink-0">•</span>
                                       <span>{bullet}</span>
                                     </li>
                                   ))}
@@ -839,31 +1023,31 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                             </div>
 
                             {/* Technical Blueprint Specifications Sheet */}
-                            <div className="w-full bg-slate-950 border border-slate-900 rounded-xl p-4 font-mono text-[10px] text-slate-400">
-                              <div className="text-slate-300 font-bold border-b border-slate-900 pb-2 mb-3 mt-1 flex justify-between">
-                                <span>// AEROSPACE TEST FLIGHT REPORT</span>
-                                <span className="text-cyan-400 tracking-widest font-bold uppercase select-none">STABLE // CONFIRMED</span>
+                            <div className="w-full bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 font-mono text-[10px] sm:text-[11px] text-slate-700 shadow-2xs">
+                              <div className="text-slate-800 font-bold border-b border-slate-100 pb-1.5 mb-2.5 flex justify-between">
+                                <span className="font-display">// AEROSPACE TEST FLIGHT REPORT</span>
+                                <span className="text-sky-600 tracking-wider font-bold uppercase select-none">CONFIRMED</span>
                               </div>
-                              <div className="grid grid-cols-2 gap-y-2.5 gap-x-4">
+                              <div className="grid grid-cols-2 gap-y-1.5 gap-x-3">
                                 {project.reportDetails ? (
                                   project.reportDetails.map((detail, dIdx) => (
                                     <div key={dIdx}>
-                                      <span className="text-slate-500">{detail.label}:</span> {detail.value}
+                                      <span className="text-slate-400">{detail.label}:</span> <span className="text-slate-900 font-semibold">{detail.value}</span>
                                     </div>
                                   ))
                                 ) : (
                                   <>
-                                    <div><span className="text-slate-500">Status:</span> Detailed analysis completed</div>
-                                    <div><span className="text-slate-550">Telemetry:</span> Active</div>
+                                    <div><span className="text-slate-400">Status:</span> Completed</div>
+                                    <div><span className="text-slate-400">Telemetry:</span> Active</div>
                                   </>
                                 )}
                               </div>
                             </div>
 
                             {/* Technical Badges List */}
-                            <ul className="flex flex-wrap gap-2 font-mono text-[10px] text-slate-400 w-full">
+                            <ul className="flex flex-wrap gap-1 font-mono text-[9px] text-slate-600 w-full">
                               {project.tech.map(t => (
-                                <li key={t} className="bg-slate-900 px-2.5 py-1 rounded-md border border-slate-800 text-slate-400 font-medium">
+                                <li key={t} className="bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 text-slate-700 font-medium">
                                   {t}
                                 </li>
                               ))}
@@ -884,37 +1068,35 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
           const isFeaturedExpanded = expandedFeatured[i] !== false;
 
           return (
-            <div key={i} className="flex flex-col gap-8">
-              <div className="border border-slate-800/80 bg-slate-950/80 rounded-2xl p-6 backdrop-blur-md shadow-2xl relative overflow-hidden">
-                {/* Neon header divider band */}
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/25 to-transparent"></div>
+            <div key={i} id={`project-${project.id}`} className="scroll-mt-28 flex flex-col gap-6">
+              <div className="border border-slate-200 bg-white rounded-2xl p-4 sm:p-5 lg:p-6 shadow-xs hover:border-sky-300 hover:shadow-md transition-all relative overflow-hidden">
                 
                 {/* Header metadata */}
-                <div className={`flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 ${isFeaturedExpanded ? 'border-b border-slate-800/80 pb-6 mb-6' : ''}`}>
+                <div className={`flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 ${isFeaturedExpanded ? 'border-b border-slate-100 pb-4 mb-4' : ''}`}>
                   <div className="flex flex-col text-left flex-grow">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className={`h-2 w-2 rounded-full bg-cyan-400 ${isFeaturedExpanded ? 'animate-pulse' : ''}`}></span>
-                      <span className="font-mono text-[10px] tracking-widest text-cyan-400 font-bold uppercase">
-                        MISSION LOG // {isFeaturedExpanded ? 'PROJECT_OPERATIONAL' : 'STANDBY'}
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`h-2 w-2 rounded-full bg-rose-500 ${isFeaturedExpanded ? 'animate-pulse' : ''}`}></span>
+                      <span className="font-mono text-[10px] tracking-wider text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200 font-bold uppercase">
+                        AVIONICS & BIO-TELEMETRY // {isFeaturedExpanded ? 'PROJECT_OPERATIONAL' : 'STANDBY'}
                       </span>
                     </div>
-                    <h3 className="text-xl md:text-2xl font-display font-bold text-slate-100 leading-tight">
+                    <h3 className="text-lg sm:text-xl font-display font-bold text-slate-900 leading-tight">
                       {project.title}
                     </h3>
-                    <p className="font-mono text-xs text-slate-400 mt-1">{project.subtitle} // {project.date}</p>
+                    <p className="font-mono text-[11px] text-slate-500 mt-0.5">{project.subtitle} // {project.date}</p>
                   </div>
 
                   {/* Collapse/Expand Dropdown Button */}
-                  <div className="flex items-center gap-4 self-stretch xl:self-auto justify-end">
+                  <div className="flex items-center gap-3 self-stretch lg:self-auto justify-end">
                     <button
                       onClick={() => {
                         SoundManager.playClick();
                         setExpandedFeatured(prev => ({ ...prev, [i]: !isFeaturedExpanded }));
                       }}
-                      className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-cyan-400 hover:border-cyan-400/30 transition-all cursor-pointer flex items-center gap-1.5 font-mono text-[10px] shrink-0"
+                      className="p-1.5 sm:p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:text-sky-600 hover:border-sky-300 transition-all cursor-pointer flex items-center gap-1.5 font-mono text-[10px] shrink-0"
                     >
                       <span>{isFeaturedExpanded ? '[COLLAPSE]' : '[EXPAND]'}</span>
-                      {isFeaturedExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                      {isFeaturedExpanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
                     </button>
                   </div>
                 </div>
@@ -928,21 +1110,14 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                       transition={{ duration: 0.3 }}
                       className="overflow-hidden"
                     >
-                      <div className="relative grid md:grid-cols-12 gap-8 items-start pt-2">
+                      <div className="relative grid md:grid-cols-12 gap-5 sm:gap-6 items-start pt-1">
                         {/* Image Column */}
-                        <div className="md:col-span-7 relative group flex flex-col gap-4">
-                          <div className="relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950 aspect-video flex items-center justify-center shadow-lg">
-                            {/* HUD Corner Accents */}
-                            <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-cyan-400/40 z-20 m-2"></div>
-                            <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-cyan-400/40 z-20 m-2"></div>
-                            <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-cyan-400/40 z-20 m-2"></div>
-                            <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-cyan-400/40 z-25 m-2"></div>
-                            
-                            <div className="absolute inset-0 bg-cyan-400/5 group-hover:bg-transparent transition-colors duration-300 z-10 mix-blend-multiply"></div>
+                        <div className="md:col-span-7 relative group flex flex-col gap-3">
+                          <div className="relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950 aspect-[16/10] max-h-[240px] sm:max-h-[270px] md:max-h-[290px] w-full flex items-center justify-center shadow-md">
                             <img 
                               src={currentImage.src} 
                               alt={currentImage.alt} 
-                              className="w-full h-full object-cover transition-all duration-500 rounded"
+                              className="w-full h-full object-contain sm:object-cover transition-all duration-300 rounded"
                               referrerPolicy="no-referrer"
                               onError={(e) => {
                                 (e.target as HTMLImageElement).src = `https://picsum.photos/seed/project-${i}-${activeImgIdx}/800/500`;
@@ -956,7 +1131,7 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                           </div>
                           {/* Thumbnails */}
                           {project.images && project.images.length > 1 && (
-                            <div className="grid grid-cols-5 gap-2">
+                            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
                               {project.images.map((img, idx) => (
                                 <button
                                   key={idx}
@@ -964,8 +1139,8 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                                     SoundManager.playClick();
                                     setActiveImages(prev => ({ ...prev, [i]: idx }));
                                   }}
-                                  className={`relative rounded-md overflow-hidden aspect-square border-2 transition-all cursor-pointer ${
-                                    activeImgIdx === idx ? 'border-cyan-400' : 'border-slate-800 opacity-40 hover:opacity-100'
+                                  className={`relative rounded-md overflow-hidden h-10 sm:h-11 w-full border-2 transition-all cursor-pointer ${
+                                    activeImgIdx === idx ? 'border-rose-500 ring-2 ring-rose-200' : 'border-slate-200 hover:border-slate-300'
                                   }`}
                                 >
                                   <img 
@@ -983,15 +1158,15 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                         </div>
 
                         <div className="md:col-span-5 relative z-20 flex flex-col items-start text-left">
-                          <div className="bg-slate-900 border border-slate-800/60 backdrop-blur-sm p-6 rounded-xl text-slate-300 text-sm mb-6 relative w-full shadow-md font-sans">
-                            <div className="absolute top-0 left-0 bottom-0 w-[2px] bg-cyan-400"></div>
-                            <p className="font-sans mb-4 text-slate-400 leading-relaxed text-sm font-normal">{project.description}</p>
+                          <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 sm:p-5 text-slate-700 text-xs sm:text-sm mb-3 relative w-full shadow-2xs font-sans">
+                            <div className="absolute top-0 left-0 bottom-0 w-1 bg-rose-500 rounded-l-2xl"></div>
+                            <p className="font-sans mb-3 text-slate-600 leading-relaxed text-xs sm:text-sm font-normal">{project.description}</p>
                             
                             {project.bullets && (
-                              <ul className="space-y-3 text-xs text-slate-300 font-sans border-t border-slate-800/80 pt-4 mt-4">
+                              <ul className="space-y-2 text-xs text-slate-700 font-sans border-t border-slate-200/80 pt-3 mt-3">
                                 {project.bullets.map((bullet, bIdx) => (
-                                  <li key={bIdx} className="flex items-start gap-2 leading-relaxed">
-                                    <span className="text-cyan-400 select-none font-bold shrink-0">▸</span>
+                                  <li key={bIdx} className="flex items-start gap-1.5 leading-relaxed">
+                                    <span className="text-rose-500 select-none font-bold shrink-0">•</span>
                                     <span>{bullet}</span>
                                   </li>
                                 ))}
@@ -999,9 +1174,9 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
                             )}
                           </div>
                           
-                          <ul className="flex flex-wrap gap-2 font-mono text-[10px] text-slate-400 w-full">
+                          <ul className="flex flex-wrap gap-1 font-mono text-[9px] sm:text-[10px] text-slate-600 w-full">
                             {project.tech.map(t => (
-                              <li key={t} className="bg-slate-900 px-2.5 py-1 rounded-md border border-slate-800 text-slate-400 font-medium">{t}</li>
+                              <li key={t} className="bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 text-slate-700 font-medium">{t}</li>
                             ))}
                           </ul>
                         </div>
@@ -1015,155 +1190,181 @@ export default function Projects({ viewMode = 'full', onViewAll, onBack }: Proje
         })}
       </div>
 
-      {/* Other Projects Grid */}
-      <h3 className="text-xl font-display font-bold text-slate-200 mb-8 text-center">Other Noteworthy Projects</h3>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-        {otherProjects.map((project, i) => {
-          const isExpanded = expandedCard === i;
-          return (
-            <motion.div 
-              key={i}
-              layout="position"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              className={`bg-slate-900 border rounded-xl p-8 flex flex-col transition-all duration-300 relative overflow-hidden group select-none ${
-                isExpanded 
-                  ? 'md:col-span-2 lg:col-span-3 border-cyan-400 bg-slate-950/90 shadow-[0_0_30px_rgba(6,182,212,0.05)]' 
-                  : 'border-slate-800 hover:border-cyan-400/30'
-              }`}
-            >
-              {/* Scanline effect on hover */}
-              {!isExpanded && (
-                <div className="absolute inset-0 h-[2px] w-full bg-cyan-400/20 -translate-y-full group-hover:animate-[scan_2s_ease-in-out_infinite]"></div>
-              )}
-              
-              <div className="flex justify-between items-center mb-6">
-                <Folder className="text-cyan-400" size={40} strokeWidth={1.5} />
-                <button
+      {/* Other Projects Grid & CAD Repository */}
+      <div id="project-cad-models" className="scroll-mt-28">
+        <h3 className="text-xl sm:text-2xl font-display font-bold text-slate-900 mb-6 text-center">Aerospace CAD Models & Engineering Repositories</h3>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 items-start">
+          {otherProjects.map((project, i) => {
+            const isExpanded = expandedCard === i;
+            return (
+              <motion.div 
+                key={i}
+                layout="position"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.4 }}
+                className={`bg-white border rounded-2xl p-4 sm:p-5 flex flex-col transition-all duration-300 relative overflow-hidden group select-none shadow-xs ${
+                  isExpanded 
+                    ? 'md:col-span-2 lg:col-span-3 border-sky-400 shadow-md ring-2 ring-sky-100' 
+                    : 'border-slate-200 hover:border-sky-300 hover:shadow-sm'
+                }`}
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600">
+                    <Folder size={22} strokeWidth={1.5} />
+                  </div>
+                  <button
+                    onClick={() => {
+                      SoundManager.playClick();
+                      setExpandedCard(isExpanded ? null : i);
+                    }}
+                    className="p-1.5 sm:p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:text-sky-600 hover:border-sky-300 transition-all cursor-pointer flex items-center gap-1.5 font-mono text-[10px]"
+                  >
+                    <span>{isExpanded ? '[COLLAPSE]' : '[EXPAND]'}</span>
+                    {isExpanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+                  </button>
+                </div>
+
+                <h4 
                   onClick={() => {
                     SoundManager.playClick();
                     setExpandedCard(isExpanded ? null : i);
                   }}
-                  className="p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-400 hover:text-cyan-400 hover:border-cyan-400/30 transition-all cursor-pointer flex items-center gap-1.5 font-mono text-[10px]"
+                  className="text-base sm:text-lg font-display font-bold text-slate-900 mb-1.5 group-hover:text-sky-600 transition-colors cursor-pointer"
                 >
-                  <span>{isExpanded ? '[COLLAPSE]' : '[EXPAND]'}</span>
-                  {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                </button>
-              </div>
+                  {project.title}
+                </h4>
+                <p className="text-slate-600 text-xs mb-4 font-sans leading-relaxed">
+                  {project.description}
+                </p>
 
-              <h4 
-                onClick={() => {
-                  SoundManager.playClick();
-                  setExpandedCard(isExpanded ? null : i);
-                }}
-                className="text-xl font-display font-bold text-slate-200 mb-3 group-hover:text-cyan-400 transition-colors cursor-pointer"
-              >
-                {project.title}
-              </h4>
-              <p className="text-slate-400 text-sm mb-6 font-sans">
-                {project.description}
-              </p>
+                {/* Expandable Section */}
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="border-t border-slate-100 pt-4 mt-1 mb-4 overflow-hidden text-left"
+                    >
+                      {project.isCadModels ? (
+                        /* RENDER INTERACTIVE CAD EXPLORER */
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center gap-2">
+                            <span className="h-2 w-2 rounded-full bg-sky-500 animate-pulse"></span>
+                            <span className="font-mono text-[10px] tracking-wider text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 font-bold uppercase">
+                              MODEL REPOSITORY // SOLIDWORKS · CATIA · STEP · STL
+                            </span>
+                          </div>
 
-              {/* Expandable Section */}
-              <AnimatePresence>
-                {isExpanded && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="border-t border-slate-800/80 pt-6 mt-2 mb-6 overflow-hidden text-left"
-                  >
-                    {project.isCadModels ? (
-                      /* RENDER INTERACTIVE CAD EXPLORER */
-                      <div className="flex flex-col gap-6">
-                        <div className="flex items-center gap-2">
-                          <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
-                          <span className="font-mono text-[10px] tracking-widest text-cyan-400 font-bold uppercase">
-                            MODEL REPOSITORY // LOCAL_DISK
-                          </span>
-                        </div>
+                          {/* File Explorer Tab Selector */}
+                          <div className="flex flex-wrap gap-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-200/80">
+                            {cadFolders.map(folder => (
+                              <button
+                                key={folder.id}
+                                onClick={() => {
+                                  SoundManager.playClick();
+                                  setActiveFolderId(folder.id);
+                                }}
+                                className={`px-2.5 py-1 rounded-lg font-mono text-[11px] transition-all duration-200 cursor-pointer font-semibold ${
+                                  activeFolderId === folder.id
+                                    ? 'bg-sky-600 text-white font-bold shadow-xs'
+                                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                                }`}
+                              >
+                                {folder.label} ({folder.files.length})
+                              </button>
+                            ))}
+                          </div>
 
-                        {/* File Explorer Tab Selector */}
-                        <div className="flex flex-wrap gap-1.5 bg-slate-900/95 p-1 rounded-lg border border-slate-800/80">
-                          {cadFolders.map(folder => (
-                            <button
-                              key={folder.id}
-                              onClick={() => {
-                                SoundManager.playClick();
-                                setActiveFolderId(folder.id);
-                              }}
-                              className={`px-3 py-1.5 rounded-md font-mono text-[10px] transition-all duration-200 cursor-pointer ${
-                                activeFolderId === folder.id
-                                  ? 'bg-cyan-500 text-slate-950 font-bold'
-                                  : 'text-slate-400 hover:text-slate-200'
-                              }`}
-                            >
-                              {folder.label} ({folder.files.length})
-                            </button>
-                          ))}
-                        </div>
-
-                        {/* Files Grid View */}
-                        <div className="bg-slate-900/50 border border-slate-850 rounded-xl p-4 max-h-[300px] overflow-y-auto">
-                          <div className="grid sm:grid-cols-2 gap-3">
-                            {cadFolders.find(f => f.id === activeFolderId)?.files.map((file, fIdx) => {
-                              const folderPath = cadFolders.find(f => f.id === activeFolderId)?.path;
-                              const downloadUrl = `/cad-cam/${folderPath}/${file.name}`;
-                              return (
-                                <div 
-                                  key={fIdx}
-                                  className="flex items-center justify-between p-2.5 rounded bg-slate-950/60 border border-slate-900 hover:border-cyan-400/20 transition-all font-mono text-[11px]"
-                                >
-                                  <div className="flex items-center gap-2 truncate pr-2">
-                                    <File className="text-cyan-400/60 shrink-0" size={14} />
-                                    <span className="text-slate-300 truncate" title={file.name}>{file.name}</span>
+                          {/* Files Grid View */}
+                          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 sm:p-4 max-h-[240px] overflow-y-auto">
+                            <div className="grid sm:grid-cols-2 gap-2">
+                              {cadFolders.find(f => f.id === activeFolderId)?.files.map((file, fIdx) => {
+                                const folderPath = cadFolders.find(f => f.id === activeFolderId)?.path;
+                                const downloadUrl = `/cad-cam/${folderPath}/${file.name}`;
+                                return (
+                                  <div 
+                                    key={fIdx}
+                                    className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200 hover:border-sky-300 transition-all font-mono text-[11px]"
+                                  >
+                                    <div className="flex items-center gap-2 truncate pr-2">
+                                      <File className="text-sky-500 shrink-0" size={13} />
+                                      <span className="text-slate-800 font-medium truncate" title={file.name}>{file.name}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 shrink-0">
+                                      <span className="text-[10px] text-slate-400 font-semibold">{file.size}</span>
+                                      <a 
+                                        href={downloadUrl}
+                                        download
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        onClick={() => SoundManager.playSuccess()}
+                                        className="p-1 rounded text-sky-600 hover:text-sky-700 hover:bg-sky-50 transition-colors"
+                                        title="Download Model File"
+                                      >
+                                        <Download size={13} />
+                                      </a>
+                                    </div>
                                   </div>
-                                  <div className="flex items-center gap-3 shrink-0">
-                                    <span className="text-[10px] text-slate-550 font-semibold">{file.size}</span>
-                                    <a 
-                                      href={downloadUrl}
-                                      download
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      onClick={() => SoundManager.playSuccess()}
-                                      className="p-1 rounded text-cyan-400 hover:text-cyan-300 hover:bg-slate-900 transition-colors"
-                                      title="Download Model File"
-                                    >
-                                      <Download size={13} />
-                                    </a>
-                                  </div>
-                                </div>
-                              );
-                            })}
+                                );
+                              })}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ) : (
-                      /* RENDER BULLET LIST FOR DYNAMICS AND AVIONICS PANEL */
-                      <ul className="space-y-3">
-                        {project.bullets?.map((bullet, bIdx) => (
-                          <li key={bIdx} className="flex items-start gap-2.5 text-xs text-slate-350 leading-relaxed font-sans">
-                            <span className="text-cyan-400 select-none font-bold shrink-0">▸</span>
-                            <span>{bullet}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                      ) : (
+                        /* RENDER BULLET LIST FOR DYNAMICS AND AVIONICS PANEL */
+                        <ul className="space-y-2">
+                          {project.bullets?.map((bullet, bIdx) => (
+                            <li key={bIdx} className="flex items-start gap-2 text-xs text-slate-600 leading-relaxed font-sans">
+                              <span className="text-sky-500 select-none font-bold shrink-0">•</span>
+                              <span>{bullet}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-              <ul className="flex flex-wrap gap-2.5 font-mono text-[10px] text-slate-500 mt-auto">
-                {project.tech.map(t => (
-                  <li key={t} className="bg-slate-950/40 px-2 py-0.5 rounded border border-slate-800/40">{t}</li>
-                ))}
-              </ul>
-            </motion.div>
-          );
-        })}
+                <ul className="flex flex-wrap gap-1 font-mono text-[9px] sm:text-[10px] text-slate-500 mt-auto">
+                  {project.tech.map(t => (
+                    <li key={t} className="bg-slate-50 px-2 py-0.5 rounded border border-slate-200 text-slate-600">{t}</li>
+                  ))}
+                </ul>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Return to Portfolio Navigation Banner */}
+      <div className="mt-12 bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
+        <div className="text-center sm:text-left">
+          <h4 className="font-display font-bold text-base sm:text-lg text-slate-900">Finished Exploring Workstations?</h4>
+          <p className="text-xs text-slate-600 font-sans mt-0.5">Return to the portfolio home or get in touch for aerospace collaboration.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              SoundManager.playClick();
+              if (onBack) onBack();
+              else window.location.href = '/#projects';
+            }}
+            className="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:text-sky-600 hover:border-sky-300 font-mono text-xs font-semibold transition-all cursor-pointer bg-slate-50"
+          >
+            ◂ Return to Portfolio (Home)
+          </button>
+          <a
+            href="/#contact"
+            onClick={() => SoundManager.playClick()}
+            className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-mono text-xs font-semibold shadow-xs transition-all"
+          >
+            Contact Ayushman ➔
+          </a>
+        </div>
       </div>
     </motion.section>
   );

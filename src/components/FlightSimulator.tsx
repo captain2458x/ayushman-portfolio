@@ -291,25 +291,32 @@ export default function FlightSimulator() {
   }, [kp, kd, turbulence]);
 
   return (
-    <div className="mt-16 bg-slate-950/80 border border-slate-800 rounded-2xl p-6 shadow-xl w-full text-left font-mono">
-      <div className="flex items-center gap-2 mb-6 border-b border-slate-900 pb-4">
-        <Activity className="text-cyan-400 animate-pulse" size={18} />
-        <h3 className="text-sm font-bold text-slate-100 uppercase tracking-widest">
-          FLIGHT STABILITY CONTROL // DYNAMIC_SANDBOX
-        </h3>
+    <div className="mt-14 bg-white border border-slate-200 rounded-2xl p-6 shadow-xs w-full text-left font-mono">
+      <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+        <div className="flex items-center gap-2.5">
+          <div className="p-1.5 rounded-lg bg-sky-50 text-sky-600 border border-sky-100">
+            <Activity className="animate-pulse" size={16} />
+          </div>
+          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider font-display">
+            Interactive PID Flight Controller // Simulation Sandbox
+          </h3>
+        </div>
+        <span className="text-[11px] font-mono text-slate-400 hidden sm:inline">
+          Drag in viewport to adjust target altitude
+        </span>
       </div>
 
       <div className="grid lg:grid-cols-12 gap-8 items-start">
         
         {/* Sliders Console Panel (Left) */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="bg-slate-900 border border-slate-850 p-4 rounded-xl space-y-4">
+        <div className="lg:col-span-5 space-y-5">
+          <div className="bg-slate-50 border border-slate-200/80 p-4 rounded-xl space-y-4">
             
             {/* Proportional slider */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400 font-bold">PROPORTIONAL GAIN (Kp)</span>
-                <span className="text-cyan-400 font-bold">{kp.toFixed(3)}</span>
+                <span className="text-slate-700 font-bold">PROPORTIONAL GAIN (Kp)</span>
+                <span className="text-sky-600 font-bold">{kp.toFixed(3)}</span>
               </div>
               <input 
                 type="range" 
@@ -321,18 +328,18 @@ export default function FlightSimulator() {
                   setKp(parseFloat(e.target.value));
                   SoundManager.playHover();
                 }}
-                className="w-full h-1 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-600"
               />
               <p className="text-[10px] text-slate-500 font-sans leading-tight">
-                Controls thrust force directly matching current altitude error. If too high, causes heavy overshoot and oscillations.
+                Controls thrust force directly matching current altitude error. High values cause oscillations.
               </p>
             </div>
 
             {/* Derivative slider */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400 font-bold">DERIVATIVE GAIN (Kd)</span>
-                <span className="text-cyan-400 font-bold">{kd.toFixed(3)}</span>
+                <span className="text-slate-700 font-bold">DERIVATIVE GAIN (Kd)</span>
+                <span className="text-sky-600 font-bold">{kd.toFixed(3)}</span>
               </div>
               <input 
                 type="range" 
@@ -344,18 +351,18 @@ export default function FlightSimulator() {
                   setKd(parseFloat(e.target.value));
                   SoundManager.playHover();
                 }}
-                className="w-full h-1 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-600"
               />
               <p className="text-[10px] text-slate-500 font-sans leading-tight">
-                Damps vertical velocity. High Kd adds friction and stops oscillations, but setting it too high makes the system sluggish.
+                Damps vertical velocity. Adds stability friction to prevent persistent overshoot.
               </p>
             </div>
 
             {/* Turbulence selector */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400 font-bold">WIND TURBULENCE</span>
-                <span className="text-amber-400 font-bold uppercase">{turbulence}</span>
+                <span className="text-slate-700 font-bold">WIND TURBULENCE</span>
+                <span className="text-amber-600 font-bold uppercase">{turbulence}</span>
               </div>
               <div className="grid grid-cols-3 gap-2">
                 {['none', 'low', 'high'].map(level => (
@@ -365,10 +372,10 @@ export default function FlightSimulator() {
                       SoundManager.playClick();
                       setTurbulence(level);
                     }}
-                    className={`py-1.5 rounded text-[10px] font-bold border transition-all cursor-pointer ${
+                    className={`py-1.5 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
                       turbulence === level 
-                        ? 'bg-cyan-500 text-slate-950 border-cyan-500 font-extrabold'
-                        : 'bg-slate-950/40 text-slate-400 border-slate-800 hover:text-slate-200'
+                        ? 'bg-sky-600 text-white border-sky-600 font-bold shadow-xs'
+                        : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
                     }`}
                   >
                     {level.toUpperCase()}
@@ -380,43 +387,39 @@ export default function FlightSimulator() {
           </div>
 
           {/* Diagnostics readout HUD */}
-          <div className="bg-slate-950 border border-slate-900 p-4 rounded-xl text-[10px] leading-relaxed text-slate-400 space-y-2.5">
-            <div className="flex justify-between border-b border-slate-900 pb-1.5">
-              <span>// AUTOPILOT STATUS REPORT</span>
-              <span className={isStable ? 'text-green-400 font-bold' : 'text-red-400 font-bold animate-pulse'}>
+          <div className="bg-slate-900 text-slate-300 border border-slate-800 p-4 rounded-xl text-[10px] leading-relaxed space-y-2">
+            <div className="flex justify-between border-b border-slate-800 pb-1.5">
+              <span className="text-slate-400">// AUTOPILOT STATUS REPORT</span>
+              <span className={isStable ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold animate-pulse'}>
                 {isStable ? 'STABLE_HOVER' : 'UNSTABLE_OSCILLATION'}
               </span>
             </div>
             
             <div className="flex justify-between">
-              <span>Stability Confidence Rating:</span>
-              <span className={stabilityScore > 75 ? 'text-green-400' : stabilityScore > 40 ? 'text-amber-400' : 'text-red-400'}>
+              <span className="text-slate-400">Stability Confidence:</span>
+              <span className={stabilityScore > 75 ? 'text-emerald-400 font-bold' : stabilityScore > 40 ? 'text-amber-400 font-bold' : 'text-rose-400 font-bold'}>
                 {stabilityScore}%
               </span>
             </div>
 
-            <div className="space-y-1 pt-1.5 border-t border-slate-900 font-sans text-slate-500">
+            <div className="space-y-1 pt-1.5 border-t border-slate-800 font-sans text-slate-400">
               <div className="flex gap-1.5 items-start">
-                <span className="text-cyan-400 font-mono font-bold">1.</span>
-                <span>Drag inside the canvas viewport on the right to set a new altitude target.</span>
-              </div>
-              <div className="flex gap-1.5 items-start">
-                <span className="text-cyan-400 font-mono font-bold">2.</span>
-                <span>Tune values to match stable flight targets: Recommended ratios are roughly <b>Kp ~ 0.12</b> and <b>Kd ~ 0.45</b>.</span>
+                <span className="text-sky-400 font-mono font-bold">1.</span>
+                <span>Click & drag vertically inside the flight radar to command new target altitude.</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Live Canvas Viewport (Right) */}
-        <div className="lg:col-span-7 flex flex-col gap-4">
-          <div className="relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950/40 aspect-video flex items-center justify-center shadow-inner group">
+        <div className="lg:col-span-7 flex flex-col gap-3.5">
+          <div className="relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950 aspect-video flex items-center justify-center shadow-md group">
             
             {/* Corner accents */}
-            <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-400/25 z-20 m-2"></div>
-            <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cyan-400/25 z-20 m-2"></div>
-            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-cyan-400/25 z-20 m-2"></div>
-            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-400/25 z-20 m-2"></div>
+            <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-sky-400/40 z-20 m-2"></div>
+            <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-sky-400/40 z-20 m-2"></div>
+            <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-sky-400/40 z-20 m-2"></div>
+            <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-sky-400/40 z-20 m-2"></div>
 
             <canvas
               ref={canvasRef}
@@ -431,21 +434,21 @@ export default function FlightSimulator() {
           </div>
 
           {/* Quick flight reset inputs */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <button
               onClick={resetDrone}
-              className="py-2.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-cyan-400 hover:border-cyan-400/30 transition-all flex items-center justify-center gap-2 text-xs font-bold cursor-pointer"
+              className="py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-sky-600 hover:border-sky-300 transition-all flex items-center justify-center gap-2 text-xs font-semibold shadow-xs cursor-pointer active:scale-95"
             >
-              <RotateCcw size={14} />
-              <span>[RESET TO GROUND]</span>
+              <RotateCcw size={14} className="text-sky-500" />
+              <span>Reset to Ground</span>
             </button>
             
             <button
               onClick={dropDrone}
-              className="py-2.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-red-400 hover:border-red-400/30 transition-all flex items-center justify-center gap-2 text-xs font-bold cursor-pointer"
+              className="py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-rose-600 hover:border-rose-300 transition-all flex items-center justify-center gap-2 text-xs font-semibold shadow-xs cursor-pointer active:scale-95"
             >
-              <Play size={14} className="rotate-90" />
-              <span>[GRAVITY TEST DROP]</span>
+              <Play size={14} className="rotate-90 text-rose-500" />
+              <span>Gravity Test Drop</span>
             </button>
           </div>
         </div>

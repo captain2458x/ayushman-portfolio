@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Award, ExternalLink } from 'lucide-react';
+import SoundManager from '../utils/audio';
 
 export default function Certifications() {
   const certs = [
@@ -8,36 +9,42 @@ export default function Certifications() {
       title: 'From Code to Flight — MATLAB & Simulink', 
       issuer: 'Vyadh Aerospace Pvt. Ltd.', 
       date: 'Mar 2026',
+      badgeColor: 'bg-sky-50 text-sky-700 border-sky-200',
       link: null
     },
     { 
       title: 'Drone Systems and Controls', 
-      issuer: 'NPTEL', 
+      issuer: 'NPTEL (IIT)', 
       date: 'Nov 2025',
+      badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200',
       link: null 
     },
     { 
       title: 'Autodesk AutoCAD Certified', 
-      issuer: 'Udemy', 
+      issuer: 'Autodesk / Udemy', 
       date: 'Aug 2025',
+      badgeColor: 'bg-amber-50 text-amber-700 border-amber-200',
       link: 'https://www.udemy.com/certificate/UC-1526f314-83bc-4cff-8446-697624ee93ee/'
     },
     { 
       title: 'Space Technology for Disaster Risk Reduction', 
       issuer: 'ISRO', 
       date: 'Jun 2025',
+      badgeColor: 'bg-purple-50 text-purple-700 border-purple-200',
       link: 'https://isrolms.irs.gov.in/mod/customcert/verify_certificate.php?contextid=1628095'
     },
     { 
       title: 'Remote Sensing & Digital Image Analysis', 
       issuer: 'ISRO – IIRS', 
       date: 'Mar 2025',
+      badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
       link: 'https://isrolms.irs.gov.in/mod/customcert/verify_certificate.php?contextid=1049408'
     },
     { 
-      title: 'MATLAB Certified', 
-      issuer: 'Great Learning', 
+      title: 'MATLAB Certified Specialist', 
+      issuer: 'Great Learning / MathWorks', 
       date: 'Aug 2024',
+      badgeColor: 'bg-orange-50 text-orange-700 border-orange-200',
       link: null 
     },
   ];
@@ -46,78 +53,77 @@ export default function Certifications() {
     <motion.section 
       id="certifications" 
       className="scroll-mt-24"
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5 }}
     >
-      <div className="flex items-center gap-4 mb-8">
-        <h2 className="text-2xl font-display font-bold text-slate-200 flex items-center gap-2">
-          <span className="text-cyan-400 font-mono text-xl font-normal">06.</span> Certifications
+      <div className="flex items-center gap-3 mb-8">
+        <span className="text-xs font-mono font-bold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-md border border-sky-200">
+          06.
+        </span>
+        <h2 className="text-2xl font-display font-bold text-slate-900">
+          Certifications & Credentials
         </h2>
+        <div className="h-px bg-slate-200 flex-grow max-w-xs"></div>
       </div>
 
-      <div className="space-y-4">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {certs.map((cert, i) => {
-          const content = (
-            <>
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-cyan-500/0 group-hover:bg-cyan-500/50 transition-colors"></div>
-              <div className="mt-1 text-cyan-400 group-hover:scale-110 transition-transform shrink-0">
-                <Award size={20} />
+          const cardBody = (
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs hover:border-sky-300 hover:shadow-sm transition-all flex items-start gap-3.5 group">
+              <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                <Award size={18} />
               </div>
-              <div className="flex-grow">
-                <h3 className="font-bold text-slate-200 group-hover:text-cyan-400 transition-colors flex items-center gap-1.5 flex-wrap">
-                  {cert.title}
-                  {cert.link && <ExternalLink size={12} className="opacity-40 group-hover:opacity-100 transition-opacity" />}
-                </h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-sm text-slate-400">{cert.issuer}</span>
-                  <span className="text-slate-600">•</span>
-                  <span className="text-xs font-mono text-slate-500">{cert.date}</span>
-                  {cert.link ? (
-                    <>
-                      <span className="text-slate-600">•</span>
-                      <span className="text-xs text-cyan-500/80 font-mono group-hover:text-cyan-400 transition-colors">View Certificate ↗</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-slate-600">•</span>
-                      <span className="text-[10px] text-slate-600 font-mono">Available on Request</span>
-                    </>
+              <div className="flex-grow min-w-0">
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="font-display font-bold text-slate-900 text-sm leading-snug group-hover:text-sky-600 transition-colors">
+                    {cert.title}
+                  </h3>
+                  {cert.link && (
+                    <ExternalLink size={13} className="text-slate-400 group-hover:text-sky-600 shrink-0 mt-0.5" />
+                  )}
+                </div>
+                
+                <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded-md border font-semibold ${cert.badgeColor}`}>
+                    {cert.issuer}
+                  </span>
+                  <span className="text-[11px] font-mono text-slate-600">{cert.date}</span>
+                  {cert.link && (
+                    <span className="text-[10px] font-mono text-sky-600 font-semibold ml-auto">
+                      Verified ↗
+                    </span>
                   )}
                 </div>
               </div>
-            </>
+            </div>
           );
 
-          if (cert.link) {
-            return (
-              <motion.a 
-                key={i} 
-                href={cert.link}
-                target="_blank"
-                rel="noreferrer"
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
-                className="flex items-start gap-4 p-4 rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-800/80 hover:border-cyan-400/30 transition-all group relative overflow-hidden cursor-pointer"
-              >
-                {content}
-              </motion.a>
-            );
-          }
-
-          return (
-            <motion.div 
+          return cert.link ? (
+            <motion.a 
               key={i} 
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              href={cert.link}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => SoundManager.playClick()}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.4 }}
-              className="flex items-start gap-4 p-4 rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-800/80 hover:border-cyan-400/30 transition-all group relative overflow-hidden"
+              transition={{ delay: i * 0.08, duration: 0.3 }}
+              className="block cursor-pointer"
             >
-              {content}
+              {cardBody}
+            </motion.a>
+          ) : (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08, duration: 0.3 }}
+            >
+              {cardBody}
             </motion.div>
           );
         })}

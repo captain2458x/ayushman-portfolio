@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import { Plane, Menu, X, Download } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import SoundManager from '../utils/audio';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const isProjectsPage = location.pathname.startsWith('/projects');
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -15,50 +23,129 @@ export default function Navbar() {
   const navItems = [
     { name: 'About', href: '#about' },
     { name: 'Experience', href: '#experience' },
-    { name: 'Projects', href: '#projects' },
+    { name: 'Education', href: '#education' },
     { name: 'Skills', href: '#skills' },
+    { name: 'Projects', href: '#projects' },
     { name: 'Contact', href: '#contact' },
   ];
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    SoundManager.playClick();
+    if (isProjectsPage) {
+      e.preventDefault();
+      if (href === '#projects') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        navigate(`/${href}`);
+      }
+    }
+  };
+
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    SoundManager.playClick();
+    if (isProjectsPage) {
+      e.preventDefault();
+      navigate('/');
+    }
+  };
+
   return (
     <motion.header 
-      initial={{ y: -100 }}
+      initial={{ y: -80 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-950/90 backdrop-blur-md border-b border-cyan-500/20 py-4 shadow-[0_4px_30px_rgba(6,182,212,0.1)]' : 'bg-transparent py-6'}`}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        scrolled 
+          ? 'bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-sm py-3.5' 
+          : 'bg-transparent py-5'
+      }`}
     >
-      <div className="w-full px-6 md:px-12 lg:px-24 flex justify-between items-center">
-        <a href="#" className="flex items-center gap-2 text-xl font-display font-bold tracking-tighter text-cyan-400 group">
-          <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
-          AS<span className="text-slate-100 group-hover:text-cyan-400 transition-colors">.</span>
+      <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
+        {/* Logo */}
+        <a 
+          href={isProjectsPage ? "/" : "#"} 
+          onClick={handleLogoClick}
+          className="flex items-center gap-2.5 group cursor-pointer"
+        >
+          <div className="w-8 h-8 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 group-hover:bg-sky-500 group-hover:text-white transition-all shadow-xs">
+            <Plane size={16} className="rotate-45 group-hover:scale-110 transition-transform" />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-display font-bold text-slate-900 tracking-tight text-base leading-none">
+              Ayushman<span className="text-sky-500">.</span>
+            </span>
+            <span className="text-[10px] font-mono text-slate-600 uppercase tracking-wider">Aero Engineer</span>
+          </div>
         </a>
-        <nav className="hidden md:flex items-center gap-8">
-          {navItems.map((item, i) => (
-            <motion.a 
+
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-7">
+          {navItems.map((item) => (
+            <a 
               key={item.name} 
-              href={item.href}
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 + 0.3 }}
-              className="text-sm font-mono text-slate-400 hover:text-cyan-400 transition-colors relative group"
+              href={isProjectsPage ? `/${item.href}` : item.href}
+              onClick={(e) => handleNavClick(e, item.href)}
+              className="text-sm font-medium text-slate-700 hover:text-sky-600 transition-colors relative group py-1"
             >
-              <span className="text-cyan-500/50 mr-1">0{i + 1}.</span>
               {item.name}
-              <span className="absolute -bottom-1 left-0 w-0 h-px bg-cyan-400 transition-all group-hover:w-full"></span>
-            </motion.a>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-sky-500 rounded-full transition-all duration-200 group-hover:w-full"></span>
+            </a>
           ))}
-          <motion.a 
+          
+          <a 
             href="/resume/Ayushmanresume.pdf" 
             target="_blank"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.8 }}
-            className="px-4 py-2 text-sm font-mono text-cyan-400 border border-cyan-400/50 rounded hover:bg-cyan-400/10 hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all"
+            download
+            onClick={() => SoundManager.playFlyby()}
+            className="flex items-center gap-1.5 px-4 py-2 text-xs font-mono font-semibold text-white bg-sky-600 hover:bg-sky-700 rounded-full shadow-xs hover:shadow-md transition-all active:scale-95"
+          >
+            <Download size={13} />
+            <span>Resume</span>
+          </a>
+        </nav>
+
+        {/* Mobile menu trigger */}
+        <div className="md:hidden flex items-center gap-2">
+          <a 
+            href="/resume/Ayushmanresume.pdf" 
+            target="_blank"
+            download
+            className="px-3 py-1.5 text-xs font-mono font-semibold text-white bg-sky-600 rounded-full"
           >
             Resume
-          </motion.a>
-        </nav>
+          </a>
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <motion.div 
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          className="md:hidden bg-white border-b border-slate-200 px-6 py-4 shadow-lg space-y-3"
+        >
+          {navItems.map((item) => (
+            <a 
+              key={item.name} 
+              href={isProjectsPage ? `/${item.href}` : item.href}
+              onClick={(e) => {
+                setMobileMenuOpen(false);
+                handleNavClick(e, item.href);
+              }}
+              className="block text-sm font-medium text-slate-700 hover:text-sky-600 py-1.5 border-b border-slate-100 last:border-none"
+            >
+              {item.name}
+            </a>
+          ))}
+        </motion.div>
+      )}
     </motion.header>
   );
 }

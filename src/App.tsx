@@ -3,75 +3,130 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Hero from './components/Hero';
 import About from './components/About';
-import Experience from './components/Experience';
-import Projects from './components/Projects';
 import Skills from './components/Skills';
+import Projects from './components/Projects';
+import Experience from './components/Experience';
 import Education from './components/Education';
 import Certifications from './components/Certifications';
 import Contact from './components/Contact';
 import Navbar from './components/Navbar';
-import RocketBackground from './components/RocketBackground';
-import CockpitControls from './components/CockpitControls';
-import AirplaneTransition from './components/AirplaneTransition';
-import SoundManager from './utils/audio';
+import SkyBackground from './components/SkyBackground';
 
-export default function App() {
-  const [currentView, setCurrentView] = React.useState<'home' | 'hangar'>('home');
-  const [isTransitioning, setIsTransitioning] = React.useState(false);
+function HomeView() {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const triggerTransition = (targetView: 'home' | 'hangar') => {
-    if (isTransitioning) return;
-    SoundManager.playFlyby();
-    setIsTransitioning(true);
-
-    // Swap views halfway through the transition animation (at 700ms)
-    setTimeout(() => {
-      setCurrentView(targetView);
-      window.scrollTo({ top: 0, behavior: 'instant' as any });
-    }, 700);
-
-    // Complete the transition
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 1600);
-  };
+  // Scroll to hash target if present when returning from /projects
+  useEffect(() => {
+    if (location.hash) {
+      setTimeout(() => {
+        const el = document.querySelector(location.hash);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, [location.hash]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 selection:bg-cyan-500/30 overflow-x-hidden">
-      <RocketBackground />
-      <AirplaneTransition isActive={isTransitioning} />
-
-      {currentView === 'home' ? (
-        <>
-          <Navbar />
-          <CockpitControls />
-          
-          <main className="w-full px-6 md:px-12 lg:px-24 py-24 space-y-32">
-            <Hero />
-            <About />
-            <Experience />
-            <Projects viewMode="teaser" onViewAll={() => triggerTransition('hangar')} />
-            <Skills />
-            <div className="grid md:grid-cols-2 gap-12">
-              <Education />
-              <Certifications />
-            </div>
-            <Contact />
-          </main>
-        </>
-      ) : (
-        <main className="w-full px-6 md:px-12 lg:px-24 py-24 min-h-[85vh]">
-          <Projects viewMode="full" onBack={() => triggerTransition('home')} />
-        </main>
-      )}
+    <main className="max-w-6xl mx-auto px-5 sm:px-8 lg:px-12 py-10 space-y-24 md:space-y-32">
+      <Hero />
+      <About />
       
-      <footer className="py-8 text-center text-slate-500 text-sm font-mono border-t border-slate-800/50">
-        <p>© {new Date().getFullYear()} Ayushman Srivastava. Built with React & Tailwind.</p>
+      {/* Experience & Education Side-by-Side */}
+      <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-start">
+        <Experience />
+        <Education />
+      </div>
+
+      <Skills />
+
+      {/* Featured Projects Showcase with real preview images & redirect links */}
+      <Projects 
+        viewMode="teaser"
+        onViewProject={(projectId) => {
+          navigate(`/projects?id=${projectId}`);
+        }}
+        onViewAll={() => {
+          navigate('/projects');
+        }}
+      />
+
+      <Certifications />
+      <Contact />
+    </main>
+  );
+}
+
+function ProjectsView() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Scroll to top or specific project target on page enter
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const targetId = params.get('id') || location.hash.replace('#', '').replace('project-', '');
+    if (targetId) {
+      setTimeout(() => {
+        const el = document.getElementById(`project-${targetId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 150);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [location]);
+
+  return (
+    <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 w-full overflow-hidden">
+      <Projects 
+        viewMode="full"
+        onBack={() => {
+          navigate('/#projects');
+        }}
+      />
+    </main>
+  );
+}
+
+function AppContent() {
+  return (
+    <div className="min-h-screen bg-[#F8FBFF] text-slate-800 selection:bg-sky-500/20 selection:text-sky-900 overflow-x-hidden relative font-sans flex flex-col justify-between">
+      {/* Minimal Sky Atmospheric Background */}
+      <SkyBackground />
+
+      {/* Sticky Clean Frosted Navigation */}
+      <Navbar />
+
+      {/* Page Routing Stream */}
+      <div className="flex-grow">
+        <Routes>
+          <Route path="/" element={<HomeView />} />
+          <Route path="/projects" element={<ProjectsView />} />
+          <Route path="*" element={<HomeView />} />
+        </Routes>
+      </div>
+
+      {/* Clean Minimalist Footer */}
+      <footer className="py-8 text-center text-slate-500 text-xs font-mono border-t border-slate-200/80 bg-white/60">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <span>© {new Date().getFullYear()} Ayushman Srivastava · Aeronautical Engineering</span>
+          <span className="text-slate-400">FGIET Rae Bareli (AKTU) · Minimal Sky Edition ✈️</span>
+        </div>
       </footer>
     </div>
   );
 }
 
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  );
+}
